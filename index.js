@@ -92,7 +92,7 @@ class GameBoard {
         let row = 0;
         let canContain = null;
 
-        if (this.ships.length > 0) {
+        if (this.ships.length) {
             const [lastShip] = this.ships.slice(-1);
             const point = lastShip.vertical ? lastShip.points[0] : lastShip.points.slice(-1)[0];
             col = point.col + parseInt(Math.random() * 5);
@@ -138,10 +138,9 @@ class GameBoard {
 }
 
 class Controller {
-    constructor(board, shipClass) {
+    constructor(board) {
         this.isTurn = false;
         this.board = board;
-        this.shipClass = shipClass
     }
 
     play(point) {
@@ -156,19 +155,19 @@ class Controller {
         this.play(this.board.getPoint(col, row));
     }
 
-    randomShips() {
+    randomShips(shipClass) {
         const sizes = [1, 1, 1, 2, 3, 4, 5],
-            isVertical = [true, false];
+             isVertical = [true, false];
 
         const ships = [];
-        while (sizes) {
+        while (sizes.length) {
             const size = sizes.splice(parseInt(Math.random() * sizes.length), 1);
-            const orientation = isVertical[parseInt(Math.random() * isVertical.length)]
+            const orientation = isVertical[parseInt(Math.random() * isVertical.length)];
 
-            ships.push(new this.shipClass(size, orientation));
+            ships.push(new shipClass(size, orientation));
         }
-        
-        return ships
+
+        return ships;
     }
 }
 
