@@ -120,12 +120,16 @@ class GameBoard {
     }
 
     recieveAttack(point) {
-        point.isAttacked = true;
+        if (!point.isAttacked) {
+            point.isAttacked = true;
 
-        if (point.isOccupied) {
-            let [ship] = this.ships.filter((s) => s.points.include(point));
-            ship.recieveAttack();
+            if (point.isOccupied) {
+                let [ship] = this.ships.filter((s) => s.points.include(point));
+                ship.recieveAttack();
+            }
+            return true
         }
+        return false
     }
 
     isClear() {
@@ -146,8 +150,9 @@ class Controller {
     }
 
     randomPlay() {
-        let col = parseInt(Math.random() * 10), row = parseInt(Math.random() * 10);
-        this.play(this.board.getPoint(col, row))
+        let col = parseInt(Math.random() * 10),
+            row = parseInt(Math.random() * 10);
+        this.play(this.board.getPoint(col, row));
     }
 }
 
