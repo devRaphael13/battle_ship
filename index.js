@@ -42,6 +42,10 @@ class GameBoard {
         return this.board;
     }
 
+    getPoint(col, row) {
+        return this.board[row][col];
+    }
+
     fill(pointClass) {
         for (let i = 0; i < this.size; i++) {
             let row = [];
@@ -61,22 +65,21 @@ class GameBoard {
 
         for (let i = row; i < this.size; i++) {
             for (let j = col; j < this.size; j++) {
-                let point = this.board[i][j];
+                let point = this.getPoint(j, i);
                 if (!point.isAttacked && !point.isOccupied) return point;
             }
         }
 
-        return null
+        return null;
     }
 
     canContain(space, size, isVertical) {
         let spaceArray = [];
         for (let i = 0; i < size; i++) {
             if (isVertical) {
-                console.log(space.row, space.col)
-                spaceArray.push(this.board[space.row + i][space.col]);
+                spaceArray.push(this.getPoint(space.col, space.row + i));
             } else {
-                spaceArray.push(this.board[space.row][space.col + i]);
+                spaceArray.push(this.getPoint(space.col + i, space.row));
             }
         }
 
@@ -116,18 +119,35 @@ class GameBoard {
         ship.points = spaceArray;
     }
 
-    recieveAttack(col, row) {
-        const point = this.board[row][col]
-        point.isAttacked = true
+    recieveAttack(point) {
+        point.isAttacked = true;
 
         if (point.isOccupied) {
-            let [ship] = this.ships.filter((s) => s.points.include(point))
-            ship.recieveAttack()
+            let [ship] = this.ships.filter((s) => s.points.include(point));
+            ship.recieveAttack();
         }
     }
 
     isClear() {
-        return this.ships.every((ship) => ship.isSunk)
+        return this.ships.every((ship) => ship.isSunk);
+    }
+}
+
+class Controller {
+    constructor(board) {
+        this.isTurn = false;
+        this.board = board;
+    }
+
+    play(point) {
+        this.isTurn = true;
+        this.board.recieveAttack(point);
+        this.isTurn = point.isOccupied ? true : false;
+    }
+
+    randomPlay() {
+        let col = parseInt(Math.random() * 10), row = parseInt(Math.random() * 10);
+        this.play(this.board.getPoint(col, row))
     }
 }
 
