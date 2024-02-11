@@ -1,30 +1,36 @@
-//col, row
-// [0, 0]
 class Ship {
     constructor(size, vertical = false) {
         this.size = size;
         this.vertical = vertical;
-        this.ship = [...Array(this.size).fill([null, null])]
+        this.points = null;
         this.hits = 0;
         this.isSunk = false;
     }
 
-    hits() {
-        this.hits += 1
-        return this.hits
+    hits(point) {
+        point.isAttacked = true
+        this.hits += 1;
+        return this;
     }
 
     isSunk() {
         if (this.hits >= this.size) {
-            this.isSunk = true
-            return true
-        }
-        else {
-            this.isSunk = false
-            return false
+            this.isSunk = true;
+            return true;
+        } else {
+            this.isSunk = false;
+            return false;
         }
     }
 }
 
-module.exports = {Ship}
+class Point {
+    constructor(col, row) {
+        this.col = col;
+        this.row = row;
+        this.isOccupied = false;
+        this.isAttacked = false;
+    }
+}
 
+module.exports = {Ship, Point}
