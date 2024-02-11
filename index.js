@@ -3,24 +3,23 @@ class Ship {
         this.size = size;
         this.vertical = vertical;
         this.points = null;
-        this.hits = 0;
+        this.damage = 0;
         this.isSunk = false;
     }
 
-    hits(point) {
-        point.isAttacked = true
-        this.hits += 1;
+    recieveAttack(point) {
+        point.isAttacked = true;
+        this.damage += 1;
         return this;
     }
 
-    isSunk() {
-        if (this.hits >= this.size) {
+    status() {
+        if (this.damage >= this.size) {
             this.isSunk = true;
             return true;
-        } else {
-            this.isSunk = false;
-            return false;
         }
+        this.isSunk = false;
+        return false;
     }
 }
 
@@ -33,4 +32,4 @@ class Point {
     }
 }
 
-module.exports = {Ship, Point}
+module.exports = { Ship, Point };
