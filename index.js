@@ -127,9 +127,9 @@ class GameBoard {
                 let [ship] = this.ships.filter((s) => s.points.include(point));
                 ship.recieveAttack();
             }
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     isClear() {
@@ -138,9 +138,10 @@ class GameBoard {
 }
 
 class Controller {
-    constructor(board) {
+    constructor(board, shipClass) {
         this.isTurn = false;
         this.board = board;
+        this.shipClass = shipClass
     }
 
     play(point) {
@@ -153,6 +154,21 @@ class Controller {
         let col = parseInt(Math.random() * 10),
             row = parseInt(Math.random() * 10);
         this.play(this.board.getPoint(col, row));
+    }
+
+    randomShips() {
+        const sizes = [1, 1, 1, 2, 3, 4, 5],
+            isVertical = [true, false];
+
+        const ships = [];
+        while (sizes) {
+            const size = sizes.splice(parseInt(Math.random() * sizes.length), 1);
+            const orientation = isVertical[parseInt(Math.random() * isVertical.length)]
+
+            ships.push(new this.shipClass(size, orientation));
+        }
+        
+        return ships
     }
 }
 
