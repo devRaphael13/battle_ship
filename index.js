@@ -157,7 +157,7 @@ class Controller {
 
     randomShips(shipClass) {
         const sizes = [1, 1, 1, 2, 3, 4, 5],
-             isVertical = [true, false];
+            isVertical = [true, false];
 
         const ships = [];
         while (sizes.length) {
@@ -170,5 +170,30 @@ class Controller {
         return ships;
     }
 }
+
+class Dom {
+    constructor() {
+        this.myBoard = document.getElementById("my_board")
+        this.oppBoard = document.getElementById("opp_board");
+    }
+
+    boardElem(size) {
+        let board = ``;
+        for (let i = 0; i < size; i++) {
+            let row = [];
+            for (let j = 0; j < size; j++) {
+                row.push(`<div class="point" data-col=${j} data-row=${i}></div>`);
+            }
+
+            board = board.concat(`<div class="row" data-row=${new Point(0, 0)}>${row.join(" ")}</div>`);
+        }
+
+        this.myBoard.innerHTML = board
+        this.oppBoard.innerHTML = board
+        return this
+    }
+}
+
+new Dom().boardElem(10)
 
 module.exports = { Ship, Point, GameBoard };

@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle Ship</title>
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <title>Battle Ship</title>
+    </head>
+    <body>
+        <h1>Battle Ship</h1>
+        <main>
+            <section>
+                <h2>You</h2>
+                <div id="my_board" class="board"></div>
+                <div class="btn">
+                    <div>
+                        <div class="sizes">
+                            <button>Carrier (5) x 1</button>
+                            <button>Battle Ship (4) x 1</button>
+                            <button>Destroyer (3) x 1</button>
+                            <button>Submarine (2) x 1</button>
+                            <button>Patrol Boat (1) x 3</button>
+                        </div>
+                        <button>Vertical</button>
+                    </div>
+                    <button>Randomize</button>
+                </div>
+            </section>
+
+            <section>
+                <h2>Computer</h2>
+                <div id="opp_board" class="board">
+            
+                </div>
+            </section>
+        </main>
+        <button>START</button>
+        <script src="index.js"></script>
+    </body>
 </html>
