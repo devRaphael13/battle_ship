@@ -23,6 +23,10 @@ main {
     margin-bottom: 0.125rem;
 }
 
+.occupied {
+    background: red;
+}
+
 .row {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
