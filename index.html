@@ -7,13 +7,12 @@
         <title>Battle Ship</title>
     </head>
     <body>
-        <h1>Battle Ship</h1>
+        <h1 class="title">Battle Ship</h1>
         <main>
             <section>
                 <h2>You</h2>
                 <div id="my_board" class="board"></div>
-                <div class="btn">
-                    <div>
+                <!-- <div>
                         <div class="sizes">
                             <button>Carrier (5) x 1</button>
                             <button>Battle Ship (4) x 1</button>
@@ -22,16 +21,22 @@
                             <button>Patrol Boat (1) x 3</button>
                         </div>
                         <button>Vertical</button>
-                    </div>
-                    <button>Randomize</button>
-                </div>
+                    </div> -->
+                <button id="r_btn" class="randomize_btn">
+                    <svg width="46" height="46" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            fill-rule="evenodd"
+                            d="M2.4 6.12a.6.6 0 0 1 .6-.6h.6c2.643 0 4.593 1.488 5.85 2.901a12.801 12.801 0 0 1 1.35 1.839c.312-.516.764-1.176 1.352-1.839C13.408 7.008 15.358 5.52 18 5.52v1.2c-2.157 0-3.807 1.212-4.95 2.498-.62.7-1.15 1.473-1.582 2.302.431.828.962 1.6 1.58 2.301 1.146 1.287 2.797 2.499 4.952 2.499v1.2c-2.642 0-4.592-1.488-5.848-2.902A12.718 12.718 0 0 1 10.8 12.78a12.703 12.703 0 0 1-1.35 1.838C8.192 16.032 6.242 17.52 3.6 17.52H3a.6.6 0 0 1 0-1.2h.6c2.158 0 3.808-1.212 4.952-2.499a11.55 11.55 0 0 0 1.581-2.301 11.55 11.55 0 0 0-1.58-2.302C7.407 7.932 5.756 6.72 3.6 6.72H3a.6.6 0 0 1-.6-.6Z"
+                            clip-rule="evenodd"></path>
+                        <path
+                            d="M18 8.48V3.76a.3.3 0 0 1 .492-.23l2.832 2.36a.3.3 0 0 1 0 .46l-2.832 2.36A.3.3 0 0 1 18 8.48Zm0 10.8v-4.72a.3.3 0 0 1 .492-.23l2.832 2.36a.3.3 0 0 1 0 .46l-2.832 2.36a.3.3 0 0 1-.492-.23Z"></path>
+                    </svg>
+                </button>
             </section>
 
             <section>
                 <h2>Computer</h2>
-                <div id="opp_board" class="board">
-            
-                </div>
+                <div id="opp_board" class="board"></div>
             </section>
         </main>
         <button>START</button>

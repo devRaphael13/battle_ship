@@ -80,8 +80,10 @@ class GameBoard {
         let spaceArray = [];
         for (let i = 0; i < size; i++) {
             if (isVertical) {
+                console.log(space.col, space.row);
                 spaceArray.push(this.getPoint(space.col, space.row + i));
             } else {
+                console.log(space.col, space.row);
                 spaceArray.push(this.getPoint(space.col + i, space.row));
             }
         }
@@ -127,6 +129,12 @@ class GameBoard {
     isClear() {
         return this.ships.every((ship) => ship.isSunk);
     }
+
+    reset() {
+        this.board = [];
+        this.ships = [];
+        return this.fill(Point);
+    }
 }
 
 class Controller {
@@ -165,16 +173,18 @@ class Controller {
 }
 
 class Dom {
-    constructor(id, board) {
+    constructor(id, board, controller) {
         this.boardElem = document.getElementById(id);
-        this.board = board;
+        this.board = board
+        this.controller = controller;
+        this.pointElems = [];
     }
 
-    createBoard(size) {
+    createBoard() {
         let board = ``;
-        for (let i = 0; i < size; i++) {
+        for (let i = 0; i < this.board.size; i++) {
             let row = [];
-            for (let j = 0; j < size; j++) {
+            for (let j = 0; j < this.board.size; j++) {
                 row.push(`<div class="point" data-col=${j} data-row=${i}></div>`);
             }
 
@@ -184,28 +194,44 @@ class Dom {
         return this;
     }
 
-    placeShips(ships) {
-        ships.map((ship) => {
-            this.board.place(ship);
-        });
+    placeShips(ships = null) {
+        ships = ships ? ships : this.controller.randomShips(Ship);
+        ships.map((ship) => this.board.place(ship));
 
-        ships.forEach((ship) => {
-            ship.points.forEach((point) => {
+        for (let ship of ships) {
+            for (let point of ship.points) {
                 const [col, row] = [point.col, point.row];
-                const element = this.boardElem.children[row].children[col];
-                element.classList.add("occupied");
-            });
+                this.pointElems.push(this.boardElem.children[row].children[col]);
+            }
+        }
+        return this;
+    }
+
+    showPoints() {
+        this.pointElems.forEach((elem) => {
+            elem.classList.add("occupied");
         });
+        return this;
     }
 }
-const myBoard = new GameBoard(10).fill(Point);
-const oppBoard = new GameBoard(10).fill(Point);
 
-const myController = new Controller(oppBoard);
-const oppController = new Controller(myBoard);
+let myBoard = new GameBoard(10).fill(Point);
+let oppBoard = new GameBoard(10).fill(Point);
 
-const oppDom = new Dom("opp_board", oppBoard).createBoard(10);
+let myController = new Controller(oppBoard);
+let oppController = new Controller(myBoard);
 
-oppDom.placeShips(oppController.randomShips(Ship));
+let oppDom = new Dom("opp_board", oppBoard, oppController).createBoard();
+let myDom = new Dom("my_board", myBoard, myController).createBoard();
+
+const randomBtn = document.getElementById("r_btn");
+
+myDom.placeShips().showPoints();
+randomBtn.addEventListener("click", (e) => {
+    myBoard = new GameBoard(10).fill(Point);
+    myDom = new Dom("my_board", myBoard, myController).createBoard()
+    myDom.placeShips().showPoints();
+});
+oppDom.placeShips();
 
 module.exports = { Ship, Point, GameBoard };
