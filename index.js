@@ -134,13 +134,18 @@ class GameBoard {
 
 class Controller {
     constructor(board) {
-        this.isTurn = false;
+        this.isTurn = true;
         this.board = board;
         this.lost = false;
     }
 
     getTurn() {
         return this.isTurn;
+    }
+
+    nextTurn() {
+        this.isTurn = true;
+        return this
     }
 
     play(point) {
@@ -173,9 +178,10 @@ class Controller {
 }
 
 class Dom {
-    constructor(id, board, controller) {
+    constructor(id, controller, oppController) {
         this.boardElem = document.getElementById(id);
-        this.board = board;
+        this.board = controller.board;
+        this.oppController = oppController;
         this.controller = controller;
         this.pointElems = [];
     }
@@ -229,6 +235,8 @@ class Dom {
                         } else {
                             pointElem.innerHTML = "&";
                         }
+                    } else {
+                        this.oppController.nextTurn()
                     }
                     console.log(this.controller.getTurn());
                 });
@@ -242,11 +250,11 @@ class Dom {
 let myBoard = new GameBoard(10).fill(Point);
 let oppBoard = new GameBoard(10).fill(Point);
 
-let myController = new Controller(myBoard)
+let myController = new Controller(myBoard);
 let oppController = new Controller(oppBoard);
 
-let oppDom = new Dom("opp_board", oppBoard, oppController).createBoard();
-let myDom = new Dom("my_board", myBoard, myController).createBoard();
+let oppDom = new Dom("opp_board", oppController, myController).createBoard();
+let myDom = new Dom("my_board", myController, oppController).createBoard();
 
 const randomBtn = document.getElementById("r_btn");
 
