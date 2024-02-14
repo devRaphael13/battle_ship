@@ -134,7 +134,7 @@ class GameBoard {
 
 class Controller {
     constructor(board) {
-        this.isTurn = true;
+        this.isTurn = false;
         this.board = board;
         this.lost = false;
     }
@@ -145,7 +145,7 @@ class Controller {
 
     nextTurn() {
         this.isTurn = true;
-        return this
+        return this;
     }
 
     play(point) {
@@ -234,11 +234,9 @@ class Dom {
                             pointElem.style.backgroundColor = "yellow";
                         } else {
                             pointElem.innerHTML = "&";
+                            this.oppController.nextTurn();
                         }
-                    } else {
-                        this.oppController.nextTurn()
                     }
-                    console.log(this.controller.getTurn());
                 });
             }
         }
@@ -251,7 +249,7 @@ let myBoard = new GameBoard(10).fill(Point);
 let oppBoard = new GameBoard(10).fill(Point);
 
 let myController = new Controller(myBoard);
-let oppController = new Controller(oppBoard);
+let oppController = new Controller(oppBoard).nextTurn();
 
 let oppDom = new Dom("opp_board", oppController, myController).createBoard();
 let myDom = new Dom("my_board", myController, oppController).createBoard();
