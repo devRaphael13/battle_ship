@@ -259,9 +259,9 @@ const randomBtn = document.getElementById("r_btn");
 myDom.placeShips().showPoints().pointerSetup();
 randomBtn.addEventListener("click", (e) => {
     myBoard = new GameBoard(10).fill(Point);
-    myDom = new Dom("my_board", myBoard, myController).createBoard();
+    myDom = new Dom("my_board", myController, oppController).createBoard();
     myDom.placeShips().showPoints();
 });
-oppDom.placeShips().pointerSetup().showPoints();
+oppDom.placeShips().pointerSetup();
 
 module.exports = { Ship, Point, GameBoard };
