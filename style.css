@@ -33,9 +33,10 @@ main {
 }
 
 .point {
-    padding: 1rem;
+    padding: 0.5rem;
     background: gray;
     margin-bottom: 0.125rem;
+    cursor: pointer;
 }
 
 .occupied {
@@ -67,4 +68,5 @@ svg {
     height: 3rem;
     border-radius: 50%;
     cursor: pointer;
+    text-align: center;
 }

@@ -12,13 +12,9 @@ class Ship {
         return this;
     }
 
-    status() {
-        if (this.damage >= this.size) {
-            this.isSunk = true;
-            return true;
-        }
-        this.isSunk = false;
-        return false;
+    updateStatus() {
+        this.isSunk = this.damage >= this.size ? true : false;
+        return this.isSunk;
     }
 }
 
@@ -80,10 +76,8 @@ class GameBoard {
         let spaceArray = [];
         for (let i = 0; i < size; i++) {
             if (isVertical) {
-                console.log(space.col, space.row);
                 spaceArray.push(this.getPoint(space.col, space.row + i));
             } else {
-                console.log(space.col, space.row);
                 spaceArray.push(this.getPoint(space.col + i, space.row));
             }
         }
@@ -118,8 +112,9 @@ class GameBoard {
             point.isAttacked = true;
 
             if (point.isOccupied) {
-                let [ship] = this.ships.filter((s) => s.points.include(point));
+                let [ship] = this.ships.filter((s) => s.points.includes(point));
                 ship.recieveAttack();
+                ship.updateStatus();
             }
             return true;
         }
@@ -141,12 +136,17 @@ class Controller {
     constructor(board) {
         this.isTurn = false;
         this.board = board;
+        this.lost = false;
+    }
+
+    getTurn() {
+        return this.isTurn;
     }
 
     play(point) {
-        this.isTurn = true;
         this.board.recieveAttack(point);
         this.isTurn = point.isOccupied ? true : false;
+        this.lost = this.board.isClear();
     }
 
     randomPlay() {
@@ -175,7 +175,7 @@ class Controller {
 class Dom {
     constructor(id, board, controller) {
         this.boardElem = document.getElementById(id);
-        this.board = board
+        this.board = board;
         this.controller = controller;
         this.pointElems = [];
     }
@@ -185,7 +185,7 @@ class Dom {
         for (let i = 0; i < this.board.size; i++) {
             let row = [];
             for (let j = 0; j < this.board.size; j++) {
-                row.push(`<div class="point" data-col=${j} data-row=${i}></div>`);
+                row.push(`<div class="point" data-col=${j} data-row=${i}>&nbsp;</div>`);
             }
 
             board = board.concat(`<div class="row">${row.join(" ")}</div>`);
@@ -213,25 +213,49 @@ class Dom {
         });
         return this;
     }
+
+    pointerSetup() {
+        for (let row of this.boardElem.children) {
+            for (let point of row.children) {
+                point.addEventListener("click", (e) => {
+                    let [col, row] = [e.target.dataset.col, e.target.dataset.row];
+                    let point = this.board.getPoint(col, row);
+                    let pointElem = this.boardElem.children[row].children[col];
+
+                    if (this.controller.getTurn()) {
+                        this.controller.play(point);
+                        if (point.isOccupied) {
+                            pointElem.style.backgroundColor = "yellow";
+                        } else {
+                            pointElem.innerHTML = "&";
+                        }
+                    }
+                    console.log(this.controller.getTurn());
+                });
+            }
+        }
+
+        return this;
+    }
 }
 
 let myBoard = new GameBoard(10).fill(Point);
 let oppBoard = new GameBoard(10).fill(Point);
 
-let myController = new Controller(oppBoard);
-let oppController = new Controller(myBoard);
+let myController = new Controller(myBoard)
+let oppController = new Controller(oppBoard);
 
 let oppDom = new Dom("opp_board", oppBoard, oppController).createBoard();
 let myDom = new Dom("my_board", myBoard, myController).createBoard();
 
 const randomBtn = document.getElementById("r_btn");
 
-myDom.placeShips().showPoints();
+myDom.placeShips().showPoints().pointerSetup();
 randomBtn.addEventListener("click", (e) => {
     myBoard = new GameBoard(10).fill(Point);
-    myDom = new Dom("my_board", myBoard, myController).createBoard()
+    myDom = new Dom("my_board", myBoard, myController).createBoard();
     myDom.placeShips().showPoints();
 });
-oppDom.placeShips();
+oppDom.placeShips().pointerSetup().showPoints();
 
 module.exports = { Ship, Point, GameBoard };
