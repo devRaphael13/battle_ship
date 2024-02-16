@@ -25,6 +25,11 @@ h1.title {
     font-size: 3rem;
 }
 
+h2.winner {
+    text-align: center;
+    font-size: 2rem;
+}
+
 main {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
