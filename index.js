@@ -154,18 +154,6 @@ class Controller {
         this.lost = this.board.isClear();
     }
 
-    randomPlay() {
-        let col = parseInt((Math.random() * 10000) % 10),
-            row = parseInt((Math.random() * 10000) % 10);
-
-        let point = this.board.getPoint(col, row);
-
-        if (point) {
-            this.play(point);
-            return point;
-        }
-    }
-
     randomShips(shipClass) {
         const sizes = [1, 1, 1, 2, 3, 4, 5],
             isVertical = [true, false];
@@ -185,13 +173,15 @@ class Controller {
 
 class Dom {
     constructor(id, controller, oppController) {
-        this.id = id
+        this.id = id;
         this.boardElem = document.getElementById(id);
         this.board = controller.board;
         this.oppController = oppController;
         this.controller = controller;
-        this.pointElems = [];
+        this.occupiedElems = [];
         this.winner = document.getElementById("winner");
+        this.pointElems = [];
+        this.event = new Event("click");
     }
 
     createBoard() {
@@ -202,6 +192,7 @@ class Dom {
                 row.push(`<div class="point" data-col=${j} data-row=${i}>&nbsp;</div>`);
             }
 
+            this.pointElems.push(...row);
             board = board.concat(`<div class="row">${row.join(" ")}</div>`);
         }
         this.boardElem.innerHTML = board;
@@ -215,14 +206,14 @@ class Dom {
         for (let ship of ships) {
             for (let point of ship.points) {
                 const [col, row] = [point.col, point.row];
-                this.pointElems.push(this.boardElem.children[row].children[col]);
+                this.occupiedElems.push(this.boardElem.children[row].children[col]);
             }
         }
         return this;
     }
 
     showPoints() {
-        this.pointElems.forEach((elem) => {
+        this.occupiedElems.forEach((elem) => {
             elem.classList.add("occupied");
         });
         return this;
@@ -232,8 +223,10 @@ class Dom {
         for (let row of this.boardElem.children) {
             for (let point of row.children) {
                 point.addEventListener("click", (e) => {
-                    let [col, row] = [e.target.dataset.col, e.target.dataset.row];
-                    this.play(col, row);
+                    if (this.controller.getTurn()) {
+                        let [col, row] = [e.target.dataset.col, e.target.dataset.row];
+                        this.play(col, row);
+                    }
                 });
             }
         }
@@ -245,44 +238,52 @@ class Dom {
         let point = this.board.getPoint(col, row);
         let pointElem = this.boardElem.children[row].children[col];
 
-        if (this.controller.getTurn()) {
-            if (!this.controller.lost) {
-                this.controller.play(point);
-                if (point.isOccupied) {
-                    pointElem.style.backgroundColor = "yellow";
-                } else {
-                    pointElem.innerHTML = "@";
-                    this.oppController.nextTurn();
-                }
+        if (!this.controller.lost) {
+            this.controller.play(point);
+            if (point.isOccupied) {
+                pointElem.style.backgroundColor = "yellow";
             } else {
-                const mess = this.id === "opp_board" ? "You Win!" : "You Lost!"
-                this.winner.innerHTML = mess
-                setTimeout(() => {
-                    location.reload()
-                }, 2000)
+                pointElem.innerHTML = "@";
+                this.oppController.nextTurn();
             }
+        } else {
+            const mess = this.id === "opp_board" ? "You Win!" : "You Lost!";
+            this.winner.innerHTML = mess;
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+    }
+
+    randomPlay() {
+        if (this.controller.getTurn()) {
+            const index = Math.floor(Math.random() * this.pointElems.length - 1);
+            const [col, row] = this.pointElems.splice(index, 1)[0].match(/\d/g);
+            const point = this.boardElem.children[parseInt(row)].children[parseInt(col)];
+            point.dispatchEvent(this.event);
         }
     }
 }
 
-let myBoard = new GameBoard(10).fill(Point);
-let oppBoard = new GameBoard(10).fill(Point);
+function main() {
+    let myBoard = new GameBoard(10).fill(Point);
+    let oppBoard = new GameBoard(10).fill(Point);
 
-let myController = new Controller(myBoard);
-let oppController = new Controller(oppBoard).nextTurn();
+    let myController = new Controller(myBoard);
+    let oppController = new Controller(oppBoard).nextTurn();
 
-let oppDom = new Dom("opp_board", oppController, myController).createBoard().placeShips().pointSetup().showPoints();
-let myDom = new Dom("my_board", myController, oppController).createBoard().placeShips().pointSetup().showPoints();
+    let oppDom = new Dom("opp_board", oppController, myController).createBoard().placeShips().pointSetup();
+    let myDom = new Dom("my_board", myController, oppController).createBoard().placeShips().pointSetup().showPoints();
 
-const randomBtn = document.getElementById("r_btn");
+    const randomBtn = document.getElementById("r_btn");
 
-randomBtn.addEventListener("click", (e) => {
-    location.reload();
-});
+    setInterval(() => {
+        myDom.randomPlay();
+    }, 1000);
 
-// setInterval(() => {
-//    let point = myController.randomPlay()
-//    myDom.play(point.col, point.row)
-// }, 1000);
+    randomBtn.addEventListener("click", (e) => {
+        location.reload();
+    });
+}
 
-// module.exports = { Ship, Point, GameBoard };
+main()
