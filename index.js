@@ -276,10 +276,18 @@ function main() {
     let myController = new Controller(myBoard);
     let oppController = new Controller(oppBoard).nextTurn();
 
-    let oppDom = new Dom("opp_board", oppController, myController).createBoard().placeShips().pointSetup();
-    let myDom = new Dom("my_board", myController, oppController).createBoard().placeShips().pointSetup().showPoints();
+    let oppDom = new Dom("opp_board", oppController, myController).createBoard().placeShips();
+    let myDom = new Dom("my_board", myController, oppController).createBoard().placeShips().showPoints();
 
     const randomBtn = document.getElementById("r_btn");
+    const start = document.getElementById("start");
+
+    start.addEventListener("click", (e) => {
+        oppDom.pointSetup();
+        myDom.pointSetup();
+        randomBtn.disabled = true;
+        e.target.disabled = true;
+    });
 
     setInterval(() => {
         myDom.randomPlay();
