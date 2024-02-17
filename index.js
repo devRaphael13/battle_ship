@@ -299,5 +299,3 @@ function main() {
 }
 
 main();
-
-//TODO: style the start button and make it work
